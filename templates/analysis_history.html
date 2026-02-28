@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Journal | VeriFact AI AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-800 mb-1">Verification Journal</h2>
+            <p class="text-muted mb-0">A historical audit of your content analysis requests.</p>
+        </div>
+        <a href="{{ url_for('export_history_excel') }}" class="btn btn-modern bg-white shadow-sm">
+            <i class="fas fa-file-excel mr-2 text-success"></i> Export Report
+        </a>
+    </div>
+
+    {% if history %}
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="glass-card border-0 p-4 shadow-sm h-100">
+                <h6 class="fw-800 text-muted text-uppercase mb-3">Verification Ratio</h6>
+                <div id="prediction-chart" style="height: 250px;"></div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="glass-card border-0 p-4 shadow-sm h-100">
+                <h6 class="fw-800 text-muted text-uppercase mb-3">Confidence Trend</h6>
+                <div id="confidence-chart" style="height: 250px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card border-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background: rgba(15, 23, 42, 0.02);">
+                    <tr class="small text-uppercase fw-700 text-muted">
+                        <th class="px-4 py-3">Reference ID</th>
+                        <th class="py-3">Article Title</th>
+                        <th class="py-3">AI Verdict</th>
+                        <th class="py-3">Confidence</th>
+                        <th class="py-3">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in history %}
+                    <tr>
+                        <td class="px-4 text-muted small fw-600">#{{ h[0] }}</td>
+                        <td class="fw-700 text-dark">{{ h[1] if h[1] else 'Untitled Analysis' }}</td>
+                        <td>
+                            {% if h[2] == 'Real' %}
+                                <span class="badge-status bg-soft-success text-success"><i class="fas fa-check mr-1"></i>Real</span>
+                            {% else %}
+                                <span class="badge-status bg-soft-danger text-danger"><i class="fas fa-times mr-1"></i> Fake</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-800 {{ 'text-success' if h[2] == 'Real' else 'text-danger' }}">
+                            {{ h[3] }}%
+                        </td>
+                        <td class="text-muted small">{{ h[4] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card py-5 text-center mt-4">
+        <div class="mb-4">
+            <i class="fas fa-history fa-4x text-light"></i>
+        </div>
+        <h4 class="fw-800">No History Recorded</h4>
+        <p class="text-muted">Once you run your first article through the VeriFact AI Engine, the results will appear here.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-modern btn-primary-modern mt-2">Return to Dashboard</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    {% if history %}
+    const predictions = {{ history|map(attribute=2)|list|tojson }};
+    const confidence = {{ history|map(attribute=3)|list|tojson }};
+
+    const real_count = predictions.filter(p => p === 'Real').length;
+    const fake_count = predictions.filter(p => p === 'Fake').length;
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'Inter, sans-serif', size: 12 },
+        margin: { t: 0, b: 0, l: 0, r: 0 },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.1 }
+    };
+
+    // Prediction Pie Chart
+    const dataPie = [{
+        values: [real_count, fake_count],
+        labels: ['Real', 'Fake'],
+        type: 'pie',
+        marker: { colors: ['#10b981', '#ef4444'], line: { width: 0 } },
+        hole: 0.6
+    }];
+    Plotly.newPlot('prediction-chart', dataPie, layout, {responsive: true});
+
+    // Confidence Histogram
+    const dataHist = [{
+        x: confidence,
+        type: 'histogram',
+        marker: { color: '#6366f1' },
+        nbinsx: 10
+    }];
+    Plotly.newPlot('confidence-chart', dataHist, layout, {responsive: true});
+    {% endif %}
+</script>
+
+<style>
+    .fw-800 { font-weight: 800; }
+    .badge-status {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .bg-soft-success { background: rgba(16, 185, 129, 0.1); }
+    .bg-soft-danger { background: rgba(239, 68, 68, 0.1); }
+</style>
+{% endblock %}

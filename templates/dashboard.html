@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard | VeriFact AI AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-md-flex align-items-center justify-content-between mb-5">
+        <div>
+            <h2 class="fw-800 mb-1" style="color: #0f172a;">Welcome back, {{ username }}!</h2>
+            <p class="text-muted mb-0">Your personal portal for real-time truth verification.</p>
+        </div>
+        <div class="d-none d-md-flex align-items-center">
+            <div class="text-right mr-3">
+                <div class="small fw-700 text-uppercase text-muted" style="letter-spacing: 1px;">System Status</div>
+                <div class="small fw-600 text-success"><i class="fas fa-circle mr-1" style="font-size: 8px;"></i> Neural Engine Online</div>
+            </div>
+            <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                <i class="fas fa-user-shield text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="glass-card border-0 p-3 shadow-sm dashboard-card border-left-primary">
+                <div class="d-flex align-items-center">
+                    <div class="icon-shape bg-soft-primary mr-3">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-800">{{ datasets|length }}</h5>
+                        <small class="text-muted fw-700 text-uppercase" style="font-size: 0.65rem;">Verified Datasets</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="glass-card border-0 p-3 shadow-sm dashboard-card border-left-success">
+                <div class="d-flex align-items-center">
+                    <div class="icon-shape bg-soft-success mr-3">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-800">Real-Time</h5>
+                        <small class="text-muted fw-700 text-uppercase" style="font-size: 0.65rem;">Analysis Speed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="glass-card border-0 p-3 shadow-sm dashboard-card border-left-warning">
+                <div class="d-flex align-items-center">
+                    <div class="icon-shape bg-soft-warning mr-3">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-800">V3.2 Core</h5>
+                        <small class="text-muted fw-700 text-uppercase" style="font-size: 0.65rem;">Active ML Model</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="glass-card border-0 shadow-sm p-4 p-md-5 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h4 class="fw-800 mb-0">Truth Verification</h4>
+                </div>
+
+                <form method="POST" action="{{ url_for('analyze_news') }}">
+                    <div class="form-group mb-3">
+                        <label class="small fw-700 text-muted text-uppercase">Article Title (Optional)</label>
+                        <input type="text" name="title" class="form-control modern-input" 
+                               placeholder="Enter the headline...">
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="small fw-700 text-muted text-uppercase">Article Content</label>
+                        <textarea name="content" rows="6" class="form-control modern-input" 
+                                  placeholder="Paste the full text of the article here for deep analysis..." 
+                                  required></textarea>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-modern btn-primary-modern px-5 py-3 shadow">
+                            Run Analysis Engine
+                        </button>
+                        <a href="{{ url_for('analysis_history') }}" class="btn btn-link text-muted fw-600 ml-3">
+                            <i class="fas fa-history mr-1"></i> Recent Scans
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="glass-card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-800 mb-4 text-dark"><i class="fas fa-book-open mr-2 text-primary"></i>Sample Datasets For Learning</h5>
+                <p class="text-muted small">Download our public testing datasets to understand how the AI identifies patterns.</p>
+                
+                <div class="dataset-list mt-3">
+                    {% for dataset in datasets %}
+                    <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded-lg bg-light-hover transition-all">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-file-csv text-muted mr-3 fa-lg"></i>
+                            <div>
+                                <div class="fw-700 text-dark small">{{ dataset[1] }}</div>
+                                <div class="text-muted" style="font-size: 0.6rem;">Open-source TSV</div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('download_dataset', dataset_id=dataset[0]) }}" class="btn btn-sm btn-white shadow-sm rounded-circle">
+                            <i class="fas fa-download text-primary"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-4 p-3 rounded-lg" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                    <div class="text-white fw-700 small mb-1">Need help?</div>
+                    <p class="text-white-50 small mb-0">Check out our guide on interpreting confidence scores.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fw-800 { font-weight: 800; }
+    .fw-700 { font-weight: 700; }
+    .fw-600 { font-weight: 600; }
+
+    .border-left-primary { border-left: 4px solid #6366f1 !important; }
+    .border-left-success { border-left: 4px solid #10b981 !important; }
+    .border-left-warning { border-left: 4px solid #f59e0b !important; }
+
+    .icon-shape {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+
+    .bg-soft-primary { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .bg-soft-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .bg-soft-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+    .modern-input {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+        transition: all 0.3s ease;
+    }
+
+    .modern-input:focus {
+        background: #fff !important;
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    }
+
+    .bg-light-hover:hover {
+        background: #f1f5f9;
+        cursor: default;
+    }
+
+    .transition-all { transition: all 0.2s ease-in-out; }
+</style>
+{% endblock %}

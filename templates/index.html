@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}VeriFact AI | AI-Powered Fake News Detection{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron text-center jumbotron-fluid" 
+     style="background-image: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), 
+            url('https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); 
+            background-size: cover; background-position: center; color: white; border-radius: 0 0 50px 50px; margin-top: -40px;">
+    <div class="container py-5">
+        <span class="badge badge-pill badge-primary mb-3 px-3 py-2" style="background: rgba(99, 102, 241, 0.3); border: 1px solid var(--accent);">
+            🚀 Advanced NLP & Machine Learning
+        </span>
+        <h1 style="font-weight: 800; font-size: 3.8rem; letter-spacing: -1px; margin-bottom: 1.2rem; color:white;">
+            Unmask Fake News <br><span style="color: #6366f1;">Before It Spreads</span>
+        </h1>
+        <p class="lead" style="font-size: 1.2rem; max-width: 680px; margin: 0 auto 2.5rem; color: #cbd5e1;">
+            VeriFact AI analyzes text patterns, context, language signals and source credibility using state-of-the-art NLP to classify news as Real or Fake — with explainable confidence scores.
+        </p>
+        
+        <form method="POST" class="form-inline justify-content-center">
+            <div class="input-group mb-3 shadow-lg" style="width: 65%; border-radius: 50px; overflow: hidden; background: white; padding: 5px;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-transparent border-0"><i class="fas fa-search text-muted"></i></span>
+                </div>
+                <input type="text" class="form-control border-0 px-4" name="news_query" 
+                       placeholder="Paste headline, article text or news URL..." 
+                       value="{{ request.form.get('news_query', '') }}"
+                       style="font-size: 1.1rem; outline: none; box-shadow: none;">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary px-5" style="border-radius: 50px !important;">Detect Fake News</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container" style="margin-top: -50px;">
+    <div class="row text-center">
+        <div class="col-md-10 offset-md-1">
+            <div class="bg-white p-4 shadow-sm" style="border-radius: 15px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                <div><h4 class="mb-0 font-weight-bold">98.7%</h4><small class="text-muted uppercase">Detection Accuracy</small></div>
+                <div style="width: 1px; height: 40px; background: #e2e8f0;"></div>
+                <div><h4 class="mb-0 font-weight-bold">4.8M+</h4><small class="text-muted uppercase">Articles Processed</small></div>
+                <div style="width: 1px; height: 40px; background: #e2e8f0;"></div>
+                <div><h4 class="mb-0 font-weight-bold">Real-Time</h4><small class="text-muted uppercase">Classification & Insights</small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 pt-5">
+    <div class="text-center mb-5">
+        <h2 style="font-weight: 700;">How VeriFact AI Detects Fake News</h2>
+        <p class="text-muted">Multi-layer AI analysis for reliable misinformation detection</p>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-4 px-4">
+            <div class="mb-4 text-primary"><i class="fas fa-file-alt fa-3x"></i></div>
+            <h5 class="font-weight-bold">Text Ingestion</h5>
+            <p class="small text-muted">Accepts headlines, full articles, pasted text or URLs — cleaned and preprocessed automatically.</p>
+        </div>
+        <div class="col-md-4 px-4">
+            <div class="mb-4 text-primary"><i class="fas fa-brain fa-3x"></i></div>
+            <h5 class="font-weight-bold">Advanced NLP Analysis</h5>
+            <p class="small text-muted">Examines linguistic cues, sentiment bias, named entities, readability anomalies, clickbait patterns and contextual inconsistencies.</p>
+        </div>
+        <div class="col-md-4 px-4">
+            <div class="mb-4 text-primary"><i class="fas fa-shield-alt fa-3x"></i></div>
+            <h5 class="font-weight-bold">Authenticity Scoring</h5>
+            <p class="small text-muted">Outputs Real/Fake label + confidence %, plus key evidence highlights (explainability).</p>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h3 style="font-weight: 800; color: #0f172a; margin-bottom: 0;">Recently Analyzed News</h3>
+            <p class="text-muted mb-0">Latest detection results and reports</p>
+        </div>
+        <a href="#" class="btn btn-outline-primary btn-sm px-3" style="border-radius: 20px;">View All</a>
+    </div>
+
+    <div class="row">
+        {% if applications %}
+            {% for item in applications %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm hover-card position-relative" 
+                     style="border-radius: 16px; overflow: hidden; transition: transform 0.25s, box-shadow 0.25s;">
+                    
+                    <!-- Status Badge (top-right corner) -->
+                    <span class="badge position-absolute" 
+                          style="top: 12px; right: 12px; font-size: 0.85rem; padding: 6px 12px; z-index: 10; 
+                                 {% if item[7] == 'real' or item[7] == 'genuine' %}background:#10b981; color:white;{% else %}background:#ef4444; color:white;{% endif %} 
+                                 border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                        {{ item[7] | capitalize }}
+                    </span>
+
+                    <div class="position-relative" style="height: 180px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                        <!-- Optional: news source logo or generic icon -->
+                        <img src="{{ url_for('static', filename='images/news-icon.png') }}" 
+                             class="card-img-top" alt="News" 
+                             style="max-height: 90%; width: auto; object-fit: contain; opacity: 0.75;">
+                        <span class="badge badge-dark position-absolute" style="bottom: 12px; left: 12px; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);">
+                            {{ item.get(4, 'News') | default('General') }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title font-weight-bold mb-0" style="color: #0f172a;">
+                                {{ item[1] | truncate(60) }}
+                            </h5>
+                        </div>
+
+                        <p class="card-text text-muted small mb-4" style="height: 60px; overflow: hidden;">
+                            {{ item[2] | truncate(110) }}
+                        </p>
+
+                        <a href="{{ url_for('review_news', news_id=item[0]) }}" 
+                           class="btn btn-block btn-primary mt-auto shadow-sm" 
+                           style="border-radius: 12px; font-weight: 600; padding: 12px;">
+                            View Detection Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-4 text-muted">
+                    <i class="fas fa-search-minus fa-4x"></i>
+                </div>
+                <p class="lead text-muted mb-3">
+                    No recent analyses found {% if request.form.get('news_query') %}for "{{ request.form.get('news_query') }}"{% endif %}
+                </p>
+                <button onclick="window.location.href='/'" class="btn btn-outline-secondary px-4 py-2">
+                    Clear & Start New
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container my-5 py-5 text-center" style="background: #6366f1; border-radius: 30px; color: white;">
+    <h2 class="font-weight-bold">Journalist, Researcher or Content Creator?</h2>
+    <p class="mb-4" style="opacity: 0.9;">Verify sources, protect your audience, and maintain credibility in the fight against misinformation.</p>
+    <a href="/register" class="btn btn-light btn-lg px-5 font-weight-bold text-primary" style="border-radius: 50px;">Get Started Free</a>
+</div>
+
+<footer class="footer py-5" style="background-color: #0f172a; color: #94a3b8; font-size: 0.9rem; border-top: 1px solid #1e293b;">
+    <div class="container">
+        <div class="row mb-4 text-center text-md-left">
+            <div class="col-md-6 mb-4">
+                <h5 class="text-white font-weight-bold mb-3"><i class="fas fa-shield-alt mr-2"></i>VeriFact AI</h5>
+                <p style="max-width: 320px;">Combating misinformation with explainable AI and cutting-edge natural language understanding.</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h6 class="text-white font-weight-bold">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="text-muted">Home</a></li>
+                    <li><a href="/register" class="text-muted">Register</a></li>
+                    <li><a href="/user/login" class="text-muted">Login</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h6 class="text-white font-weight-bold">Contact</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-envelope mr-2"></i> support@verifact.ai</li>
+                    <li><i class="fas fa-globe mr-2"></i> www.verifact.ai</li>
+                </ul>
+            </div>
+        </div>
+        <hr style="background: #1e293b;">
+        <div class="text-center pt-3">
+            <span>© 2026 VeriFact AI — Fake News Detection Hub. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .hover-card {
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+    .hover-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    }
+    .uppercase { text-transform: uppercase; letter-spacing: 1px; font-size: 0.7rem; }
+</style>
+
+{% endblock %}

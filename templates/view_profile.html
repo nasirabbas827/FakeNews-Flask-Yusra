@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | VeriFact AI{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow-lg border-0" style="max-width: 800px; width: 100%; border-radius: 24px; overflow: hidden;">
+        
+        <div style="height: 120px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);"></div>
+
+        <div class="card-body px-5 pb-5">
+            <div class="row">
+                <div class="col-md-4 text-center" style="margin-top: -60px;">
+                    <div class="position-relative d-inline-block">
+                        {% if user.profile_picture %}
+                        <img src="{{ url_for('static', filename=user.profile_picture[7:]) }}" 
+                             alt="Profile Picture" 
+                             class="rounded-circle shadow-lg border border-white" 
+                             style="width: 150px; height: 150px; object-fit: cover; border-width: 5px !important;">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='default_profile.png') }}" 
+                             alt="Default Profile" 
+                             class="rounded-circle shadow-lg border border-white" 
+                             style="width: 150px; height: 150px; object-fit: cover; border-width: 5px !important;">
+                        {% endif %}
+                        <div class="mt-3">
+                            <h4 class="font-weight-bold mb-0 text-dark">{{ user.first_name }} {{ user.last_name }}</h4>
+                            <p class="text-muted small">@{{ user.username }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 pt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="font-weight-bold mb-0" style="color: #0f172a;">Account Details</h3>
+                        <a href="{{ url_for('update_profile') }}" class="btn btn-primary btn-sm px-4 shadow-sm" style="border-radius: 10px;">
+                            <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-4">
+                            <label class="small text-muted font-weight-bold uppercase d-block mb-1">Username</label>
+                            <span class="h6 font-weight-600">{{ user.username }}</span>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label class="small text-muted font-weight-bold uppercase d-block mb-1">Email Address</label>
+                            <span class="h6 font-weight-600">{{ user.email }}</span>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label class="small text-muted font-weight-bold uppercase d-block mb-1">First Name</label>
+                            <span class="h6 font-weight-600">{{ user.first_name }}</span>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label class="small text-muted font-weight-bold uppercase d-block mb-1">Last Name</label>
+                            <span class="h6 font-weight-600">{{ user.last_name }}</span>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="small text-muted font-weight-bold uppercase d-block mb-1">Security Key (Password)</label>
+                            <div class="p-2 rounded bg-light border d-flex justify-content-between align-items-center">
+                                <code class="text-primary">{{ user.password }}</code>
+                                <i class="fas fa-shield-alt text-muted small"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg d-flex justify-content-around text-center" style="background: #f8fafc;">
+                        <div>
+                            <small class="text-muted d-block">Role</small>
+                            <span class="badge badge-indigo text-primary px-3">Standard User</span>
+                        </div>
+                        <div style="width: 1px; background: #e2e8f0;"></div>
+                        <div>
+                            <small class="text-muted d-block">Status</small>
+                            <span class="text-success small font-weight-bold">● Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .uppercase {
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    .font-weight-600 {
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .badge-indigo {
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 20px;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}

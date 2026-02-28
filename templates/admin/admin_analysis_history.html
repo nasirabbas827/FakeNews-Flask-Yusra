@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}Intelligence Audit | VeriFact AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-800 mb-1">Intelligence Audit</h2>
+            <p class="text-muted mb-0">Reviewing global classification patterns and user-submitted data.</p>
+        </div>
+        <a href="{{ url_for('export_analysis_excel') }}" class="btn btn-modern btn-primary-modern shadow-sm">
+            <i class="fas fa-file-excel mr-2"></i> Export Intelligence Report
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="glass-card p-3 border-0 bg-white shadow-sm">
+                <small class="text-muted fw-700 text-uppercase small">Total Scans</small>
+                <div class="h3 fw-800 mb-0 text-dark">{{ total_articles }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-3 border-0 bg-white shadow-sm border-left-success">
+                <small class="text-muted fw-700 text-uppercase small">Verified Real</small>
+                <div class="h3 fw-800 mb-0 text-success">{{ total_real }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-3 border-0 bg-white shadow-sm border-left-danger">
+                <small class="text-muted fw-700 text-uppercase small">Flagged Deceptions</small>
+                <div class="h3 fw-800 mb-0 text-danger">{{ total_fake }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if history %}
+    <div class="glass-card border-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background: rgba(15, 23, 42, 0.02);">
+                    <tr class="small text-uppercase fw-700 text-muted">
+                        <th class="px-4 py-3">ID</th>
+                        <th class="py-3">Analyst (User)</th>
+                        <th class="py-3">Content Snippet</th>
+                        <th class="py-3">AI Verdict</th>
+                        <th class="py-3 text-center">Confidence</th>
+                        <th class="py-3">Timestamp</th>
+                        <th class="py-3 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in history %}
+                    <tr>
+                        <td class="px-4 text-muted small">#{{ h[0] }}</td>
+                        <td class="fw-700 text-dark">{{ h[1] }}</td>
+                        <td>
+                            <div class="text-truncate fw-600" style="max-width: 250px;" title="{{ h[2] }}">
+                                {{ h[2] if h[2] else 'Unlabeled Entry' }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if h[3] == 'Real' %}
+                                <span class="badge-status bg-soft-success text-success">
+                                    <i class="fas fa-check-circle mr-1"></i>Real
+                                </span>
+                            {% else %}
+                                <span class="badge-status bg-soft-danger text-danger">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Fake
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-800 {{ 'text-success' if h[3] == 'Real' else 'text-danger' }}">
+                                {{ h[4] }}%
+                            </span>
+                        </td>
+                        <td class="text-muted small">
+                            {{ h[5] }}
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('delete_analysis', analysis_id=h[0]) }}" 
+                               class="btn btn-sm btn-outline-light text-muted border-0 hover-danger"
+                               onclick="return confirm('Erase this record from history?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card py-5 text-center mt-4">
+        <div class="mb-4">
+            <i class="fas fa-microscope fa-4x text-light"></i>
+        </div>
+        <h4 class="fw-800 text-muted">No Analysis Records</h4>
+        <p class="text-muted small">The audit log is currently empty. User submissions will appear here in real-time.</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .fw-800 { font-weight: 800; }
+    .fw-700 { font-weight: 700; }
+    .fw-600 { font-weight: 600; }
+
+    /* Custom Border accents for cards */
+    .border-left-success { border-left: 4px solid #10b981 !important; }
+    .border-left-danger { border-left: 4px solid #ef4444 !important; }
+
+    /* Modern Status Badges */
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
+    .bg-soft-success { background: rgba(16, 185, 129, 0.1); }
+    .bg-soft-danger { background: rgba(239, 68, 68, 0.1); }
+
+    .table td {
+        padding: 1.1rem 0.75rem;
+        border-top: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .hover-danger:hover {
+        color: #ef4444 !important;
+        background: #fee2e2 !important;
+    }
+</style>
+{% endblock %}

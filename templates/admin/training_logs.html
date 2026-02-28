@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Model Performance Logs | VeriFact AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-12">
+
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-800 mb-1">Performance Ledger</h2>
+                    <p class="text-muted mb-0">Historical record of model accuracy and architectural evolution.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('admin_datasets') }}" class="btn btn-modern bg-white shadow-sm mr-2">
+                        <i class="fas fa-chevron-left mr-2"></i> Engine Room
+                    </a>
+                    <span class="badge badge-soft-dark d-flex align-items-center px-3">
+                        <i class="fas fa-layer-group mr-2"></i> {{ logs|length }} Logs Recorded
+                    </span>
+                </div>
+            </div>
+
+            {% if logs %}
+            <div class="glass-card border-0 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead style="background: rgba(15, 23, 42, 0.02);">
+                            <tr class="small text-uppercase fw-700 text-muted">
+                                <th class="px-4 py-3">Log ID</th>
+                                <th class="py-3">Target Dataset</th>
+                                <th class="py-3">Accuracy</th>
+                                <th class="py-3">Precision / Recall / F1</th>
+                                <th class="py-3">Deployment Date</th>
+                                <th class="py-3 text-center">Management</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td class="px-4 fw-600 text-primary">#LOG-{{ log[0] }}</td>
+                                <td>
+                                    <div class="fw-800 text-dark">{{ log[1] if log[1] else 'Historical/Legacy Data' }}</div>
+                                    <small class="text-muted font-italic">Verification Pass Complete</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="fw-800 mr-2 text-success" style="font-size: 1.1rem;">{{ log[2] }}%</div>
+                                        <div class="progress flex-grow-1" style="height: 4px; min-width: 50px;">
+                                            <div class="progress-bar bg-success" style="width: {{ log[2] }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge badge-outline-secondary small" title="Precision">P: {{ log[3] }}%</span>
+                                        <span class="badge badge-outline-secondary small" title="Recall">R: {{ log[4] }}%</span>
+                                        <span class="badge badge-outline-secondary small" title="F1 Score">F1: {{ log[5] }}%</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted small">
+                                    <i class="far fa-clock mr-1"></i> {{ log[6] }}
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('delete_training_log', log_id=log[0]) }}"
+                                       class="btn btn-sm btn-light text-danger rounded-pill px-3"
+                                       onclick="return confirm('Delete this performance record? This action cannot be undone.')">
+                                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="glass-card py-5 text-center mt-4">
+                <div class="mb-4">
+                    <i class="fas fa-database fa-4x text-light"></i>
+                </div>
+                <h4 class="fw-800">No Metrics Available</h4>
+                <p class="text-muted mx-auto" style="max-width: 400px;">
+                    The model hasn't been trained on any datasets yet. Performance metrics will appear here once the Neural Engine completes its first run.
+                </p>
+                <a href="{{ url_for('admin_datasets') }}" class="btn btn-modern btn-primary-modern mt-2">
+                    Start Training Pass
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .fw-800 { font-weight: 800; }
+    .fw-700 { font-weight: 700; }
+    .fw-600 { font-weight: 600; }
+
+    .table td {
+        padding: 1.25rem 0.75rem;
+        vertical-align: middle;
+    }
+
+    .badge-soft-dark {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 700;
+        border: 1px solid #e2e8f0;
+    }
+
+    .badge-outline-secondary {
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    /* Style for the mini progress bar */
+    .progress-bar {
+        transition: width 1s ease-in-out;
+    }
+
+    /* Hover effect for row action */
+    tr:hover .btn-light {
+        background: #fee2e2 !important;
+        border-color: #fecaca !important;
+    }
+</style>
+{% endblock %}
